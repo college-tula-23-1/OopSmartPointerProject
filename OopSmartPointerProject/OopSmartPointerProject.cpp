@@ -37,13 +37,19 @@ void Func()
     std::cout << "other code\n";
 }
 
+
+
+
+
 int main()
 {
     
-    Func();
+    /*Func();
 
     Resource* r = new Resource();
     r->Value() = 200;
-    (*r).Value() = 300;
+    (*r).Value() = 300;*/
+
+    
     
 }

@@ -27,24 +27,36 @@ public:
 template <typename T>
 class ShareSmartPointer : public SmartPointer<T>
 {
-	static int count{};
+	static int count;
 public:
 	ShareSmartPointer(T* pointer = nullptr)
 		: SmartPointer(pointer)
 	{
-		count = 1;
+		if (count == 0) count = 1;
 	}
 
 	ShareSmartPointer(const ShareSmartPointer& other)
 	{
-		pointer = other.pointer;
+		this->pointer = other.pointer;
+		count++;
+	}
+
+	ShareSmartPointer operator=(const ShareSmartPointer& other)
+	{
+		if (&other == this)
+			return *this;
+
+		if (this->pointer)
+			delete this->pointer;
+
+		this->pointer = other.pointer;
 		count++;
 	}
 
 	~ShareSmartPointer()
 	{
 		if (count == 1)
-			delete pointer;
+			delete this->pointer;
 		count--;
 	}
 };
@@ -56,15 +68,31 @@ public:
 	UniqueSmartPointer(T* pointer = nullptr)
 		: SmartPointer(pointer) {}
 
-	UniqueSmartPointer(const UniqueSmartPointer& other)
+	UniqueSmartPointer(UniqueSmartPointer& other)
 	{
-		pointer = other.pointer;
+		// copy semantic
+		// pointer = new T();
+		// *pointer = *(other.pointer);
+
+		this->pointer = other.pointer;
+		other.pointer = nullptr;
+	}
+
+	UniqueSmartPointer operator=(const UniqueSmartPointer& other)
+	{
+		if (&other == this)
+			return *this;
+
+		if (this->pointer)
+			delete this->pointer;
+
+		this->pointer = other.pointer;
 		other.pointer = nullptr;
 	}
 
 	~UniqueSmartPointer()
 	{
-		if(pointer)
-			delete pointer;
+		if(this->pointer)
+			delete this->pointer;
 	}
 };
